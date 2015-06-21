@@ -1,6 +1,46 @@
 saving = 0;
 
-#include "bg_geardefine.cpp"
+class bg_loadout_define 
+{
+	class faction // superclass
+	{
+		class type
+		{
+			uniform = "U_B_CombatUniform_mcam";
+			helmet = "";
+			vest = "";
+			pack = "";
+			facewear = "";
+			goggles = "";
+			binos = "";
+			map = "ItemMap";
+			terminal = "ItemGPS";
+			radio = "ItemRadio";
+			compass = "ItemCompass";
+			watch = "ItemWatch";
+			
+			meditems[] = {{"FirstAidKit",1}};
+			packmags[] = {{"",0}};
+			packitems[] = {{"",0}};
+			items[] = {{"",0}};
+			
+			primary = "";
+			primarymags[] = {{"",0}};
+			primaryattach[] = {""};
+			
+			handgun = "";
+			handgunmags[] = {{"",0}};
+			handgunattach[] = {""};
+			
+			secondary = "";
+			secondarymags[] = {{"",0}};
+			secondaryattach[] = {""};
+		};
+	}; // define subclasses below
+	
+	#include "gear_nato.cpp"
+	#include "gear_csat.cpp"
+};
 
 class cfgFunctions
 {
