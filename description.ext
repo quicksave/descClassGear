@@ -38,8 +38,8 @@ class bg_loadout_define
 		};
 	}; // define subclasses below
 	
-	#include "gear_nato.cpp"
-	#include "gear_csat.cpp"
+	#include "gear_nato.h"
+	#include "gear_csat.h"
 };
 
 class cfgFunctions
