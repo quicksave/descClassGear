@@ -1,10 +1,15 @@
+diag_log str _this;
+
 // Depending on locality the script decides if it should run
+private ["_unit"];
+_unit = (_this select 1);
+
 if !(local _unit) exitWith {};
 
 //init vars
 private
 [
-	"_faction","_typeofUnit","_unit",
+	"_faction","_typeofUnit",
 	"_uniform", "_helmet", "_vest", "_pack", "_facewear", "_goggles", "_binos", "_map", "_terminal", "_radio", "_compass", "_watch",
 	"_meditems", "_items", "_packitems", "_packmags",
 	"_primary", "_primarymags", "_primaryattach", "_secondary", "_secondarymags", "_secondaryattach", "_handgun", "_handgunmags", "_handgunattach",
@@ -12,9 +17,7 @@ private
 ];
 
 _typeofUnit = toLower (_this select 0);
-_unit = _this select 1;
 _faction = toLower (faction _unit);
-
 
 // optional third argument to set faction
 if(count _this > 2) then
@@ -41,7 +44,7 @@ for "_x" from 0 to (count (missionconfigfile >> "bg_loadout_define" >> "faction"
 {
 	_gearname = configname ((missionconfigfile >> "bg_loadout_define" >> "faction" >> "type") select _x);
 	
-	if (istext (missionconfigfile >> "bg_loadout_define" >> "blu_f" >> _typeofunit >> _gearname)) then
+	if (istext (missionconfigfile >> "bg_loadout_define" >> _faction >> _typeofunit >> _gearname)) then
 	{
 		_gearValue = str (gettext (missionconfigfile >> "bg_loadout_define" >> _faction >> _typeofunit >> _gearname));
 	}
@@ -51,7 +54,7 @@ for "_x" from 0 to (count (missionconfigfile >> "bg_loadout_define" >> "faction"
 	};
 	
 	_code = format ["_%1 = %2", _gearName, _gearValue];
-	diag_log format ["_unit = %1, _code: %2, _gearName = %3, _gearValue = %4", _unit, _code, _gearName, _gearValue];
+	diag_log format ["_unit = %1, _code: %2, _faction = %3, _typeofunit = %4", _unit, _code, _faction, _typeofunit];
 	call compile _code;
 };
 
@@ -88,7 +91,6 @@ clearMagazineCargoGlobal (unitBackpack _unit);
 } foreach _packitems;
 
 //medical items
-	diag_log format ["_unit = %1, _meditems = %2", _unit, _meditems];
 {
 	for "_i" from 1 to (_x select 1) do
 	{
