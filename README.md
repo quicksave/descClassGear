@@ -5,4 +5,5 @@ Inherit from the faction and type classes to start, then inherit from your own s
 
 ###to do
 - integrate with f3
+- random selection if provided array of uniforms, weapons, etc
 - write more faction loadouts
