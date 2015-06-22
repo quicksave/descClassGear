@@ -2,7 +2,6 @@ class opf_f : faction
 {
 	class base : type
 	{
-		uniform = "U_O_CombatUniform_ocamo";
 		helmet = "H_HelmetO_ocamo";
 		primary = "arifle_Katiba_F";
 		vest = "V_HarnessO_brn";

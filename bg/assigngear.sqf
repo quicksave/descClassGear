@@ -1,15 +1,14 @@
-diag_log str _this;
 
-// Depending on locality the script decides if it should run
 private ["_unit"];
 _unit = (_this select 1);
 
+// Depending on locality the script decides if it should run
 if !(local _unit) exitWith {};
 
 //init vars
 private
 [
-	"_faction","_typeofUnit",
+	"_faction","_typeofUnit", "_unitsidestring", "_sideexists", "_factionexists", "_typeexists",
 	"_uniform", "_helmet", "_vest", "_pack", "_facewear", "_goggles", "_binos", "_map", "_terminal", "_radio", "_compass", "_watch",
 	"_meditems", "_items", "_packitems", "_packmags",
 	"_primary", "_primarymags", "_primaryattach", "_secondary", "_secondarymags", "_secondaryattach", "_handgun", "_handgunmags", "_handgunattach",
@@ -35,26 +34,49 @@ _unit setVariable ["f_var_assignGear_done",false,true];
 _unit setVariable ["BIS_enableRandomization", false];
 
 
+//defaulting, not quite as good as bg_loadout_selection yet
+_unitSidestring = tolower (str(side _unit));
+
+_sideexists = isclass (missionconfigfile >> "bg_loadout_define" >> _unitSidestring);
+_factionexists = isclass (missionconfigfile >> "bg_loadout_define" >> _unitSidestring >> _faction);
+_typeexists = isclass (missionconfigfile >> "bg_loadout_define" >> _unitSidestring >> _faction >> _typeofunit);
+diag_log format [" %1 : %2 >> %3 >> %4 requested", _unit, _unitsidestring, _faction, _typeofunit];
+
+if !(_sideexists) then
+{
+	_unitsidestring = "side";
+};
+if !(_factionexists) then
+{
+	_faction = "faction";
+};
+if !(_typeexists) then
+{
+	_typeofunit = "type";
+};
+diag_log format [" %1 : %2 >> %3 >> %4 final", _unit, _unitsidestring, _faction, _typeofunit];
+
+
 //vars
 _gearvalue = "";
 _gearname = "";
 
 // generates vars from description.ext, slower than f3 e.g. 31.3416 ms
-for "_x" from 0 to (count (missionconfigfile >> "bg_loadout_define" >> "faction" >> "type") - 1) do
+for "_x" from 0 to (count (missionconfigfile >> "bg_loadout_define" >> "side" >> "faction" >> "type") - 1) do
 {
-	_gearname = configname ((missionconfigfile >> "bg_loadout_define" >> "faction" >> "type") select _x);
+	_gearname = configname ((missionconfigfile >> "bg_loadout_define" >> "side" >> "faction" >> "type") select _x);
 	
-	if (istext (missionconfigfile >> "bg_loadout_define" >> _faction >> _typeofunit >> _gearname)) then
+	if (isarray ((missionconfigfile >> "bg_loadout_define" >> "side" >> "faction" >> "type") select _x)) then
 	{
-		_gearValue = str (gettext (missionconfigfile >> "bg_loadout_define" >> _faction >> _typeofunit >> _gearname));
+		_gearValue = str (getarray (missionconfigfile >> "bg_loadout_define" >> _unitsidestring >> _faction >> _typeofunit >> _gearname));
 	}
 	else
 	{
-		_gearValue = str (getarray (missionconfigfile >> "bg_loadout_define" >> _faction >> _typeofunit >> _gearname));
+		_gearValue = str (gettext (missionconfigfile >> "bg_loadout_define" >> _unitsidestring >> _faction >> _typeofunit >> _gearname));
 	};
 	
 	_code = format ["_%1 = %2", _gearName, _gearValue];
-	diag_log format ["_unit = %1, _code: %2, _faction = %3, _typeofunit = %4", _unit, _code, _faction, _typeofunit];
+	diag_log format [" %1 : _code: %2 ", _unit, _code];
 	call compile _code;
 };
 
@@ -67,6 +89,7 @@ removeAllItemsWithMagazines _unit;
 removeAllAssignedItems _unit;
 removeUniform _unit;
 removeHeadgear _unit;
+removegoggles _unit;
 removeVest _unit;
 
 //add containers
